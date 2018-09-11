@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>web-logger network</title>
+    <script src="./lib/jquery-1.8.0.min.js"></script>
+    <script src="../dist/web-logger.min.js"></script>
 </head>
 <body>
-
+<script type="text/javascript">
+    let logger = new WebLogger();
+    new Promise(function (resolve, reject) {
+        $.ajax({
+            url: 'demo.php',
+            type: 'POST',
+            data: {a: 1, b: 3},
+            dataType: 'text',
+            success: function (res) {
+                console.log(res);
+                resolve(1);
+            },
+            error: function (e) {
+                reject(0);
+            }
+        })
+    }).then(function (res) {
+        console.log(logger);
+    }).catch(function (e) {
+        console.log(e);
+    })
+</script>
 </body>
 </html>
