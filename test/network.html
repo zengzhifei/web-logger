@@ -8,18 +8,31 @@
 </head>
 <body>
 <script type="text/javascript">
-    let logger = new WebLogger();
+    let logger = new WebLogger({
+        monitorModules: ['network'],
+        modulesCallback: function (data) {
+            console.log(data);
+        },
+        network: {
+            callback: function (data) {
+                console.log(1);
+                console.log(data);
+                console.log(2);
+            }
+        }
+    });
     new Promise(function (resolve, reject) {
         $.ajax({
             url: 'demo.php',
             type: 'POST',
             data: {a: 1, b: 3},
-            dataType: 'text',
+            dataType: 'json',
             success: function (res) {
                 console.log(res);
                 resolve(1);
             },
             error: function (e) {
+                console.log(e);
                 reject(0);
             }
         })
@@ -28,6 +41,7 @@
     }).catch(function (e) {
         console.log(e);
     })
+
 </script>
 </body>
 </html>
