@@ -21,13 +21,16 @@ module.exports = {
                 exclude: /(node_modules|bower_components|test)/,
                 include: PATH.resolve(__dirname, "src"),
                 loader: 'babel'
+            },
+            {
+                test: /\.json$/,
+                loader: 'json'
             }
         ]
     },
     plugins: [
         new WEBPACK.BannerPlugin([
             'WebLogger v' + PACKAGE.version + ' (' + PACKAGE.homepage + ')',
-            '',
             '@author zengzhifei',
         ].join('\n')),
         new WEBPACK.optimize.UglifyJsPlugin({

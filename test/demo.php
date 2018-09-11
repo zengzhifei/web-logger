@@ -1,2 +1,2 @@
 <?php
-exit('hello world');
+exit(json_encode([1,2,3]));

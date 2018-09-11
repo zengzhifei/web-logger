@@ -1,6 +1,18 @@
+//utils
+import utils from './utils.js';
+
 class WebNetwork {
-    constructor() {
-        this.networkList = {};
+    constructor(options = {}) {
+        this.configs = {
+            callback: function (network) {
+                // TODO network callback
+            }
+        };
+
+        if (utils.isFunction(options.callback)) {
+            this.configs.callback = options.callback;
+        }
+
         this._mockAjax();
     }
 
@@ -10,82 +22,82 @@ class WebNetwork {
      */
     _mockAjax() {
         let that = this;
-        let id = this._getUniqueID();
         let _open = window.XMLHttpRequest.prototype.open;
         let _send = window.XMLHttpRequest.prototype.send;
 
-        this.networkList[id] = {};
-
         window.XMLHttpRequest.prototype.open = function () {
-            let _this = this, timer = null, args = [].slice.call(arguments), initState = -1, network = {};
+            let _this = this, args = [].slice.call(arguments);
 
-            this._method = args[0];
+            try {
+                let timer = null, initState = -1;
 
-            let _state = _this.onreadystatechange || function () {
-            };
-            let onReadyStateChange = function () {
-                if (_this.readyState === 0) {
-                    //TODO UNSENT
-                    !network.startTime && (network.startTime = (+new Date()));
-                } else if (_this.readyState === 1) {
-                    //TODO OPENED
-                    !network.startTime && (network.startTime = (+new Date()));
-                } else if (_this.readyState === 2) {
-                    //TODO HEADERS_RECEIVED
-                    network.header = _this.getAllResponseHeaders();
-                } else if (_this.readyState === 3) {
-                    //TODO LOADING
-                } else if (_this.readyState === 4) {
-                    //TODO DONE
-                    clearInterval(timer);
-                    network.method = args[0];
-                    network.url = args[1];
-                    network.async = args[2];
-                    network.status = _this.status;
-                    network.responseType = _this.responseType;
-                    network.response = _this.response;
-                    network.endTime = (+new Date());
-                    network.costTime = network.endTime - (network.startTime || network.endTime);
-                    Object.assign(that.networkList[id], network);
+                _this._network = {
+                    requestMethod: args[0],
+                    requestUrl: args[1],
+                    requestType: args[2] ? 'async' : 'sync'
+                };
 
-                    console.log('callback');
-                    console.log(that.networkList[id]);
-                }
-                return _state.apply(_this, arguments);
-            };
-            _this.onreadystatechange = onReadyStateChange;
+                let _state = _this.onreadystatechange || function () {
+                };
+                let onReadyStateChange = function () {
+                    if (_this.readyState === 0) {
+                        // TODO UNSENT
+                        !_this._network.requestTime && (_this._network.requestTime = (+new Date()));
+                    } else if (_this.readyState === 1) {
+                        // TODO OPENED
+                        !_this._network.requestTime && (_this._network.requestTime = (+new Date()));
+                    } else if (_this.readyState === 2) {
+                        // TODO HEADERS_RECEIVED
+                    } else if (_this.readyState === 3) {
+                        // TODO LOADING
+                    } else if (_this.readyState === 4) {
+                        // TODO DONE
+                        timer && clearInterval(timer);
+                        _this._network.requestTimeout = _this.timeout;
+                        _this._network.requestHeader = _this.getAllResponseHeaders().split('\n');
+                        _this._network.responseStatus = _this.status;
+                        _this._network.responseType = _this.responseType;
+                        _this._network.responseResult = _this.response;
+                        _this._network.responseTime = (+new Date());
+                        _this._network.costTime = _this._network.responseTime - (_this._network.requestTime || _this._network.responseTime);
 
-            timer = setInterval(() => {
-                initState !== _this.readyState && (initState = _this.readyState) && onReadyStateChange.call(_this);
-            }, 10);
-            return _open.apply(_this, args);
+                        that.configs.callback(_this._network);
+                    }
+                    return _state.apply(_this, arguments);
+                };
+                _this.onreadystatechange = onReadyStateChange;
+
+                timer = setInterval(() => {
+                    initState !== _this.readyState && (initState = _this.readyState) && onReadyStateChange.call(_this);
+                }, 10);
+
+            } catch (e) {
+                console.log(e);
+            }
+
+            return _open.apply(this, args);
         };
 
         window.XMLHttpRequest.prototype.send = function () {
-            let _this = this, args = [].slice.call(arguments), network = {};
+            let _this = this, args = [].slice.call(arguments);
 
-            if (_this._method.toLocaleUpperCase() === 'POST') {
-                network.data = args[0].split('&');
-                Object.assign(that.networkList[id], network);
+            try {
+                if (_this._network.requestMethod.toLocaleUpperCase() === 'POST') {
+                    let requestData = {};
+                    args[0] && args[0].split('&').forEach(function (item, index) {
+                        item = item.split('=');
+                        requestData[item[0]] = item[1];
+                    });
+                    _this._network.requestData = requestData;
+                }
+            } catch (e) {
+                console.log(e);
             }
 
             return _send.apply(this, args);
         };
     }
 
-    /**
-     * generate unique id
-     * @returns {string}
-     * @private
-     */
-    _getUniqueID() {
-        let length = 32, timestamp = (+new Date()).toString(), randStringArr = timestamp.split("").reverse(), id = [];
-        for (let i = 0; i < length; ++i) {
-            let index = Math.random() * (randStringArr.length - 1) | 0;
-            id.push(randStringArr[index]);
-        }
-        return id.join('');
-    }
 }
 
 export default WebNetwork;
