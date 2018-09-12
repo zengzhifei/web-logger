@@ -30,8 +30,8 @@ module.exports = {
     },
     plugins: [
         new WEBPACK.BannerPlugin([
-            'WebLogger v' + PACKAGE.version + ' (' + PACKAGE.homepage + ')',
-            '@author zengzhifei',
+            'WebLogger v' + PACKAGE.version + ' [' + PACKAGE.homepage + ']',
+            '@author ' + PACKAGE.author
         ].join('\n')),
         new WEBPACK.optimize.UglifyJsPlugin({
             compress: {

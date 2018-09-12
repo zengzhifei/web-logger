@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>web logger</title>
+    <script src="./lib/jquery-1.8.0.min.js"></script>
+    <script src="../dist/web-logger.min.js"></script>
+</head>
+<body>
+<script>
+    let logger = new WebLogger({
+        modulesCallback: function (data) {
+            console.log('this is global module callback:');
+            console.log(data);
+            console.log('\n');
+        },
+        network: {
+            callback: function (data) {
+                console.log('this is network module callback:');
+                console.log(data);
+                console.log('\n');
+            }
+        },
+        error: {
+            callback: function (data) {
+                console.log('this is error module callback:');
+                console.log(data);
+                console.log('\n');
+            }
+        }
+    });
+
+    console.log(logger);
+
+    (function testNetwork() {
+        $.ajax({
+            url: 'demo.php',
+            type: 'POST',
+            data: {'param': 'hello web logger'},
+            async: true,
+            success: function (res) {
+                //console.log(res);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    })();
+
+    (function testError() {
+        i++;
+    })();
+</script>
+</body>
+</html>

@@ -9,7 +9,6 @@
 <body>
 <script type="text/javascript">
     let logger = new WebLogger({
-        mountedModules: ['network'],
         modulesCallback: function (data) {
             console.log(data);
         },
@@ -20,23 +19,10 @@
         }
     });
 
-    request({param: 111});
-
-    function request(data) {
-        $.ajax({
-            url: 'demo.php',
-            type: 'POST',
-            data: data,
-            async: false,
-            dataType: 'json',
-            success: function (res) {
-                console.log(res);
-            },
-            error: function (e) {
-                console.log(e);
-            }
-        })
-    }
+    (function a() {
+        i++;
+    })();
 </script>
+<script src="a.js"></script>
 </body>
 </html>
