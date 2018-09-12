@@ -1,17 +1,9 @@
-//utils
-import utils from './utils.js';
+import WebModule from "./web-module";
+import utils from "./utils";
 
-class WebNetwork {
+class WebNetwork extends WebModule {
     constructor(options = {}) {
-        this.configs = {
-            callback: function (network) {
-                // TODO network callback
-            }
-        };
-
-        if (utils.isFunction(options.callback)) {
-            this.configs.callback = options.callback;
-        }
+        super(options);
 
         this._mockAjax();
     }
@@ -61,7 +53,11 @@ class WebNetwork {
                         _this._network.responseTime = (+new Date());
                         _this._network.costTime = _this._network.responseTime - (_this._network.requestTime || _this._network.responseTime);
 
-                        that.configs.callback(_this._network);
+                        if (utils.isFunction(that.configs.callback)) {
+                            setTimeout(function () {
+                                that.configs.callback(_this._network);
+                            }, 1);
+                        }
                     }
                     return _state.apply(_this, arguments);
                 };
@@ -86,7 +82,8 @@ class WebNetwork {
                     let requestData = {};
                     args[0] && args[0].split('&').forEach(function (item, index) {
                         item = item.split('=');
-                        requestData[item[0]] = item[1];
+                        let key = decodeURIComponent(item[0].replace(/\+/g, ' '));
+                        requestData[key] = decodeURIComponent(item[1].replace(/\+/g, ' '));
                     });
                     _this._network.requestData = requestData;
                 }
