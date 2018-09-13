@@ -1,5 +1,5 @@
-import WebModule from "./web-module";
-import utils from "./utils";
+import WebModule from "./web-module.js";
+import utils from "./utils.js";
 
 class WebError extends WebModule {
     constructor(option = {}) {

@@ -1,8 +1,8 @@
-import pkg from '../package';
-import utils from "./utils";
-import webCore from "./web-core";
-import network from './web-network';
-import error from './web-error';
+import pkg from '../package.json';
+import utils from "./utils.js";
+import webCore from "./web-core.js";
+import network from './web-network.js';
+import error from './web-error.js';
 
 class WebLogger {
     constructor(options = {}) {
