@@ -1,4 +1,4 @@
-import utils from "./utils";
+import utils from "./utils.js";
 
 let webCore = new class WebCore {
     constructor() {
