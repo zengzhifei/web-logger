@@ -5,14 +5,14 @@ class WebModule {
         this.configs = {
             callback: function (data) {
                 // TODO module callback
-            }
+            },
         };
         this.setOptions(options);
     }
 
     setOptions(options) {
         if (utils.isObject(options)) {
-            Object.assign(this.configs, options);
+            utils.mergeObject(this.configs, options);
         }
     }
 }
