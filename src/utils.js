@@ -22,6 +22,19 @@ let utils = new class Utils {
     isBoolean(value) {
         return Object.prototype.toString.call(value) === '[object Boolean]';
     }
+
+    isNull(value) {
+        return Object.prototype.toString.call(value) === '[object Null]';
+    }
+
+    mergeObject(target, source) {
+        if (utils.isObject(target) && utils.isObject(source)) {
+            for (let key in source) {
+                target[key] = target[key] && utils.isObject(target[key]) ? this.mergeObject(target[key], source[key]) : source[key];
+            }
+        }
+        return target;
+    }
 };
 
 export default utils;

@@ -39,7 +39,13 @@ class WebLogger {
         if (this.configs.mountedModules.length) {
             for (let i in this.configs.mountedModules) {
                 let opts = options[this.configs.mountedModules[i]];
-                utils.isObject(opts) && (this.configs[this.configs.mountedModules[i]] = opts);
+                if (utils.isObject(opts)) {
+                    if (utils.isObject(this.configs[this.configs.mountedModules[i]])) {
+                        utils.mergeObject(this.configs[this.configs.mountedModules[i]], opts);
+                    } else {
+                        this.configs[this.configs.mountedModules[i]] = opts;
+                    }
+                }
                 let configs = this.getModuleConfig(this.configs.mountedModules[i]);
                 if (utils.isFunction(modulesClass[this.configs.mountedModules[i]])) {
                     let moduleObject = new modulesClass[this.configs.mountedModules[i]](configs);
@@ -51,13 +57,20 @@ class WebLogger {
         }
     }
 
-    config(name, value = null) {
-        if (name && utils.isString(name) && (null !== value)) {
-            this.configs[name] = value;
-            return this;
-        } else {
-            return utils.isString(name) && name ? this.configs[name] : this.configs;
+    config(name = null, value = null) {
+        if (utils.isNull(name) || (utils.isString(name) && utils.isNull(value))) {
+            return utils.isNull(name) ? this.configs : this.configs[name];
+        } else if (utils.isObject(name)) {
+            utils.mergeObject(this.configs, name);
+        } else if (utils.isString(name)) {
+            if (utils.isObject(this.configs[name]) && utils.isObject(value)) {
+                utils.mergeObject(this.configs[name], value);
+            } else {
+                this.configs[name] = value;
+            }
         }
+
+        return this;
     }
 
     getModuleConfig(module) {
