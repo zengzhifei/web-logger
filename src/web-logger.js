@@ -23,7 +23,9 @@ class WebLogger {
         if (options.hasOwnProperty('mountedModules') && utils.isArray(options.mountedModules) && options.mountedModules.length) {
             let mountedModules = [];
             for (let i in options.mountedModules) {
-                this.modules.indexOf(options.mountedModules[i]) > -1 && mountedModules.push(options.mountedModules[i]);
+                if (options.mountedModules.hasOwnProperty(i)) {
+                    this.modules.indexOf(options.mountedModules[i]) > -1 && mountedModules.push(options.mountedModules[i]);
+                }
             }
             this.configs.mountedModules = mountedModules;
         } else {
@@ -85,9 +87,11 @@ class WebLogger {
     reload(module) {
         let modules = module && utils.isString(module) && this.modules.indexOf(module) > -1 ? [module] : this.configs.mountedModules;
         for (let i in modules) {
-            let configs = this.getModuleConfig(modules[i]);
-            let moduleObject = webCore.getMountedModule(modules[i]);
-            utils.isObject(moduleObject) && moduleObject.setOptions(configs);
+            if (modules.hasOwnProperty(i)) {
+                let configs = this.getModuleConfig(modules[i]);
+                let moduleObject = webCore.getMountedModule(modules[i]);
+                utils.isObject(moduleObject) && moduleObject.setOptions(configs);
+            }
         }
     }
 }
