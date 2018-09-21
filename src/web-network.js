@@ -94,7 +94,6 @@ class WebNetwork extends WebModule {
             return _send.apply(this, args);
         };
     }
-
 }
 
 export default WebNetwork;

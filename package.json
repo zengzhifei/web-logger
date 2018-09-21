@@ -32,5 +32,8 @@
     "json-loader": "^0.5.7",
     "mocha": "^5.2.0",
     "webpack": "^1.12.11"
+  },
+  "dependencies": {
+    "silly-datetime": "^0.1.2"
   }
 }

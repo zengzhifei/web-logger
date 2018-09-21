@@ -28,9 +28,11 @@ let utils = new class Utils {
     }
 
     mergeObject(target, source) {
-        if (utils.isObject(target) && utils.isObject(source)) {
+        if (this.isObject(target) && this.isObject(source)) {
             for (let key in source) {
-                target[key] = target[key] && utils.isObject(target[key]) ? this.mergeObject(target[key], source[key]) : source[key];
+                if (source.hasOwnProperty(key)) {
+                    target[key] = target[key] && this.isObject(target[key]) ? this.mergeObject(target[key], source[key]) : source[key];
+                }
             }
         }
         return target;

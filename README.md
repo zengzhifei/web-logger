@@ -1,5 +1,5 @@
 # web-logger
-A logger plugin for web pag.
+一款web页面监控插件(A logger plugin for web pag).
 
 
 ## 用途
